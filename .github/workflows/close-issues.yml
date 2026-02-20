@@ -1,0 +1,17 @@
+name: Close Issues on Label
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  close-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close issue if labeled wontfix or completed
+        if: contains(github.event.label.name, 'wontfix') || contains(github.event.label.name, 'completed')
+        run: |
+          echo "Closing issue #${{ github.event.issue.number }} due to label: ${{ github.event.label.name }}"
+          gh issue close "${{ github.event.issue.number }}" --comment "Automatically closed due to label: ${{ github.event.label.name }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
